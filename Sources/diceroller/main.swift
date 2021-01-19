@@ -9,16 +9,19 @@ var rolledDie: [String] = []
 
 func separateArguments(roll: String) -> (Int, Int, Int) {
     let range = NSRange(location: 0, length: roll.utf16.count)
-    let regex = try! NSRegularExpression(pattern: "-")
+    let negativeRegex = try! NSRegularExpression(pattern: "-")
+    let positiveRegex = try! NSRegularExpression(pattern: "[+]")
     let separators = CharacterSet(charactersIn: "d-+")
     let arguments = roll.components(separatedBy: separators)
     let dieAmount = Int(argument: arguments[0]) ?? 1
     let dieType = Int(argument: arguments[1]) ?? 0
     var modifier = 0
-    if regex.firstMatch(in: roll, options: [], range: range) != nil {
+    if negativeRegex.firstMatch(in: roll, options: [], range: range) != nil {
         modifier -= Int(argument: arguments[2]) ?? 0
-    } else {
+    } else if positiveRegex.firstMatch(in: roll, options: [], range: range) != nil {
         modifier += Int(argument: arguments[2]) ?? 0
+    } else {
+        modifier = 0
     }
     print("1: \(String(describing: dieAmount)), 2: \(String(describing: dieType)), 3: \(String(describing: modifier))")
     return (dieAmount, dieType, modifier)
